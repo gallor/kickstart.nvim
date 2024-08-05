@@ -87,11 +87,11 @@ P.S. You can delete this when you're done too. It's your config now! :)
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = ','
+vim.g.maplocalleader = ','
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -162,7 +162,10 @@ vim.opt.scrolloff = 10
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+vim.keymap.set('n', '<leader>,', '<cmd>nohlsearch<CR>')
+
+-- Map colon to semicolon
+vim.keymap.set('n', ';', ':')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -252,6 +255,108 @@ require('lazy').setup({
         delete = { text = '_' },
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
+      },
+    },
+  },
+  {
+    {
+      'maxmx03/dracula.nvim',
+      lazy = false,
+      priority = 1000,
+      config = function()
+        ---@type dracula
+        local dracula = require 'dracula'
+
+        dracula.setup {
+          styles = {
+            types = {},
+            functions = {},
+            parameters = {},
+            comments = {},
+            strings = {},
+            keywords = {},
+            variables = {},
+            constants = {},
+          },
+          transparent = false,
+          on_colors = function(colors, color)
+            ---@type dracula.palette
+            return {
+              -- override or create new colors
+              mycolor = '#ffffff',
+            }
+          end,
+          on_highlights = function(colors, color)
+            ---@type dracula.highlights
+            return {
+              ---@type vim.api.keyset.highlight
+              Normal = { fg = colors.mycolor },
+            }
+          end,
+          plugins = {
+            ['nvim-treesitter'] = true,
+            ['nvim-lspconfig'] = true,
+            ['nvim-navic'] = true,
+            ['nvim-cmp'] = true,
+            ['indent-blankline.nvim'] = true,
+            ['neo-tree.nvim'] = true,
+            ['nvim-tree.lua'] = true,
+            ['which-key.nvim'] = true,
+            ['dashboard-nvim'] = true,
+            ['gitsigns.nvim'] = true,
+            ['neogit'] = true,
+            ['todo-comments.nvim'] = true,
+            ['lazy.nvim'] = true,
+            ['telescope.nvim'] = true,
+            ['noice.nvim'] = true,
+            ['hop.nvim'] = true,
+            ['mini.statusline'] = true,
+            ['mini.tabline'] = true,
+            ['mini.starter'] = true,
+            ['mini.cursorword'] = true,
+            ['bufferline.nvim'] = true,
+          },
+        }
+        vim.cmd.colorscheme 'dracula'
+        vim.cmd.colorscheme 'dracula-soft'
+      end,
+    },
+    {
+      'nvim-lualine/lualine.nvim',
+      opts = {
+        options = {
+          theme = vim.g.colors_name,
+          refresh = {
+            statusline = 1000,
+          },
+        },
+      },
+    },
+  },
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    priority = 1000,
+    opts = {
+      flavour = 'auto',
+      dim_inactive = {
+        enabled = true,
+        shade = 'dark',
+        percentage = 0.15, -- latte, frappe, macchiato, mocha
+      },
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        notify = false,
+        mason = true,
+        nvim_surround = true,
+        gitgutter = true,
+        mini = {
+          enabled = true,
+          indentscope_color = '',
+        },
       },
     },
   },
@@ -571,7 +676,11 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        arduino_language_server = {},
+        pyright = {},
+        eslint = {},
+        cssls = {},
+        jsonls = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -579,7 +688,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
+        tsserver = {},
         --
 
         lua_ls = {
