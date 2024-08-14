@@ -90,6 +90,9 @@ P.S. You can delete this when you're done too. It's your config now! :)
 vim.g.mapleader = ','
 vim.g.maplocalleader = ','
 
+-- set 24 bit color
+vim.opt.termguicolors = true
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
@@ -349,13 +352,17 @@ require('lazy').setup({
         gitsigns = true,
         nvimtree = true,
         treesitter = true,
-        notify = false,
+        notify = true,
         mason = true,
         nvim_surround = true,
         gitgutter = true,
+        neotree = true,
         mini = {
           enabled = true,
           indentscope_color = '',
+        },
+        telescope = {
+          enabled = true
         },
       },
     },
@@ -520,7 +527,10 @@ require('lazy').setup({
       },
     },
   },
-  { 'Bilal2453/luvit-meta', lazy = true },
+  { 
+    'Bilal2453/luvit-meta',
+    lazy = true
+  },
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
@@ -781,10 +791,45 @@ require('lazy').setup({
     version = "*",
     lazy = true,
     event = {
+      "BufReadPre " .. vim.fn.expand "~" .. "/Documents/Vault/*.md",
+      "BufNewFile " .. vim.fn.expand "~" .. "/Documents/Vault/*.md"
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "hrsh7th/nvim-cmp",
+      "nvim-telescope/telescope.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    }
+  },
 
-}
+  {
+    "rcarriga/nvim-notify",
+    opts = {}
+  },
 
-}
+  {
+    "epwalsh/pomo.nvim",
+    version = "*",
+    lazy = true,
+    cmd = { "TimerStart", "TimerRepeat", "TimerSession" },
+    dependencies = {
+      "rcarriga/nvim-notify",
+    },
+    opts = {
+      sessions = {
+      -- Example session configuration for a session called "pomodoro".
+        pomodoro = {
+          { name = "Work", duration = "25m" },
+          { name = "Short Break", duration = "5m" },
+          { name = "Work", duration = "25m" },
+          { name = "Short Break", duration = "5m" },
+          { name = "Work", duration = "25m" },
+          { name = "Long Break", duration = "15m" },
+        },
+      },
+    }
+  },
+
   -- Autocomplete plugins
   { -- pypi packages
     'vrslev/cmp-pypi',
@@ -961,6 +1006,10 @@ require('lazy').setup({
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
+  {
+    
+  },
+
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -972,9 +1021,33 @@ require('lazy').setup({
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup { n_lines = 500 }
 
+      -- Trigger commenting
+      --
+      -- - 
+      require('mini.comment').setup {
+        version = '*',
+        mappings = {
+          comment = "<leader>c<space>",
+          comment_line = "<leader>c<space>",
+          comment_visual = "<leader>c<space>",
+          textobject = ""
+        }
+      }
+
+      -- Git inline diffing
+      require('mini.diff').setup()
+
+      -- Git commands
+      require('mini.git').setup()
+
+      -- Mini Map on side of window
+      require('mini.map').setup()
+
+      require('mini.tabline').setup()
+
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren,
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
@@ -1039,11 +1112,11 @@ require('lazy').setup({
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
   -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
