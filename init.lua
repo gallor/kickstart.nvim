@@ -317,6 +317,7 @@ require('lazy').setup({
             ['mini.tabline'] = true,
             ['mini.starter'] = true,
             ['mini.cursorword'] = true,
+            ['mini.map'] = true,
             ['bufferline.nvim'] = true,
           },
         }
@@ -332,37 +333,6 @@ require('lazy').setup({
           refresh = {
             statusline = 1000,
           },
-        },
-      },
-    },
-  },
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    priority = 1000,
-    opts = {
-      flavour = 'auto',
-      dim_inactive = {
-        enabled = true,
-        shade = 'dark',
-        percentage = 0.15, -- latte, frappe, macchiato, mocha
-      },
-      integrations = {
-        cmp = true,
-        gitsigns = true,
-        nvimtree = true,
-        treesitter = true,
-        notify = true,
-        mason = true,
-        nvim_surround = true,
-        gitgutter = true,
-        neotree = true,
-        mini = {
-          enabled = true,
-          indentscope_color = '',
-        },
-        telescope = {
-          enabled = true
         },
       },
     },
@@ -527,9 +497,12 @@ require('lazy').setup({
       },
     },
   },
-  { 
+  {
     'Bilal2453/luvit-meta',
-    lazy = true
+    lazy = true,
+  },
+  {
+    'microsoft/python-type-stubs'
   },
   {
     -- Main LSP Configuration
@@ -687,7 +660,17 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         arduino_language_server = {},
-        pyright = {},
+        ruff = {},
+        pyright = {
+          settings = {
+            pyright = {
+
+            }
+          }
+          -- before_init = function(_, config)
+          --   config.settings.python.analysis.stubPath = vim.fs.joinpath(vim.fn.stdpath, "data", "lazy", "python-type-stubs")
+          -- end
+        },
         eslint = {},
         cssls = {},
         jsonls = {},
@@ -698,7 +681,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`tsserver`) will work just fine
-        tsserver = {},
+        ts_ls = {},
         --
 
         lua_ls = {
@@ -707,6 +690,9 @@ require('lazy').setup({
           -- capabilities = {},
           settings = {
             Lua = {
+              diagnostics = {
+                globals = { 'vim' }
+              },
               completion = {
                 callSnippet = 'Replace',
               },
@@ -776,6 +762,9 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        python = { 'ruff' },
+        javascript = { 'standardjs' },
+        typescript = { 'ts-standard' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -787,47 +776,59 @@ require('lazy').setup({
 
   -- Obsidian
   {
-    "epwalsh/obsidian.nvim",
-    version = "*",
+    'epwalsh/obsidian.nvim',
+    version = '*',
     lazy = true,
     event = {
-      "BufReadPre " .. vim.fn.expand "~" .. "/Documents/Vault/*.md",
-      "BufNewFile " .. vim.fn.expand "~" .. "/Documents/Vault/*.md"
+      'BufReadPre ' .. vim.fn.expand '~' .. '/Documents/Vault/*.md',
+      'BufNewFile ' .. vim.fn.expand '~' .. '/Documents/Vault/*.md',
     },
     dependencies = {
-      "nvim-lua/plenary.nvim",
-      "hrsh7th/nvim-cmp",
-      "nvim-telescope/telescope.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    }
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+      'nvim-telescope/telescope.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    opts = {
+      workspaces = {
+        {
+          name = 'Vault',
+          path = '~/Documents/Vault',
+        },
+      },
+      completion = {
+        nvim_cmp = true,
+        min_chars = 2,
+      },
+    },
   },
 
   {
-    "rcarriga/nvim-notify",
-    opts = {}
+    'rcarriga/nvim-notify',
+    opts = {},
   },
 
   {
-    "epwalsh/pomo.nvim",
-    version = "*",
+    'epwalsh/pomo.nvim',
+    version = '*',
     lazy = true,
-    cmd = { "TimerStart", "TimerRepeat", "TimerSession" },
+    cmd = { 'TimerStart', 'TimerRepeat', 'TimerSession' },
     dependencies = {
-      "rcarriga/nvim-notify",
+      'rcarriga/nvim-notify',
     },
     opts = {
       sessions = {
-      -- Example session configuration for a session called "pomodoro".
+        -- Example session configuration for a session called "pomodoro".
         pomodoro = {
-          { name = "Work", duration = "25m" },
-          { name = "Short Break", duration = "5m" },
-          { name = "Work", duration = "25m" },
-          { name = "Short Break", duration = "5m" },
-          { name = "Work", duration = "25m" },
-          { name = "Long Break", duration = "15m" },
+          { name = 'Work', duration = '25m' },
+          { name = 'Short Break', duration = '5m' },
+          { name = 'Work', duration = '25m' },
+          { name = 'Short Break', duration = '5m' },
+          { name = 'Work', duration = '25m' },
+          { name = 'Long Break', duration = '15m' },
         },
       },
-    }
+    },
   },
 
   -- Autocomplete plugins
@@ -848,7 +849,7 @@ require('lazy').setup({
   },
   {
     'tzachar/cmp-fuzzy-path',
-    dependencies = { 'hrsh7th/nvim-cmp', 'tzachar/fuzzy.nvim' }
+    dependencies = { 'hrsh7th/nvim-cmp', 'tzachar/fuzzy.nvim' },
   },
 
   { -- Autocompletion
@@ -967,7 +968,12 @@ require('lazy').setup({
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
-          { name = 'nvim_lsp' },
+          {
+            name = 'nvim_lsp',
+            entry_filter = function(entry)
+              return require('cmp.types').lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
+            end,
+          },
           { name = 'luasnip' },
           { name = 'pypi', keyword_length = 4 },
           { name = 'npm', keyword_length = 4 },
@@ -991,7 +997,6 @@ require('lazy').setup({
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
@@ -1002,16 +1007,52 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
+  {
+    'catppuccin/nvim',
+    name = 'catppuccin',
+    init = function()
+      vim.cmd.colorscheme 'catppuccin'
+    end,
+    priority = 1000,
+    opts = {
+      flavour = 'frappe',
+      dim_inactive = {
+        enabled = true,
+        shade = 'dark',
+        percentage = 0.15, -- latte, frappe, macchiato, mocha
+      },
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        notify = true,
+        mason = true,
+        nvim_surround = true,
+        gitgutter = true,
+        neotree = true,
+        mini = {
+          enabled = true,
+          indentscope_color = '',
+        },
+        telescope = {
+          enabled = true,
+        },
+      },
+    },
+  },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
-  {
-    
-  },
+  {},
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
+    version = false,
+    dependencies = {
+      'lewis6991/gitsigns.nvim',
+    },
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -1023,15 +1064,15 @@ require('lazy').setup({
 
       -- Trigger commenting
       --
-      -- - 
+      -- -
       require('mini.comment').setup {
         version = '*',
         mappings = {
-          comment = "<leader>c<space>",
-          comment_line = "<leader>c<space>",
-          comment_visual = "<leader>c<space>",
-          textobject = ""
-        }
+          comment = '<leader>c<space>',
+          comment_line = '<leader>c<space>',
+          comment_visual = '<leader>c<space>',
+          textobject = '',
+        },
       }
 
       -- Git inline diffing
@@ -1041,16 +1082,69 @@ require('lazy').setup({
       require('mini.git').setup()
 
       -- Mini Map on side of window
-      require('mini.map').setup()
+      local miniMap = require 'mini.map'
+      miniMap.setup {
+        integrations = {
+          miniMap.gen_integration.builtin_search(),
+          miniMap.gen_integration.diff(),
+          miniMap.gen_integration.diagnostic(),
+        },
+        symbols = {
+          encode = miniMap.gen_encode_symbols.dot '4x2',
+          scroll_line = '▶',
+          scroll_view = '┋',
+        },
+      }
 
-      require('mini.tabline').setup()
+      -- Mini map keybindings
+      vim.keymap.set('n', '<Leader>mc', miniMap.close)
+      vim.keymap.set('n', '<Leader>mf', miniMap.toggle_focus)
+      vim.keymap.set('n', '<Leader>mo', miniMap.open)
+      vim.keymap.set('n', '<Leader>mr', miniMap.refresh)
+      vim.keymap.set('n', '<Leader>ms', miniMap.toggle_side)
+      vim.keymap.set('n', '<Leader>mt', miniMap.toggle)
+
+      vim.api.nvim_create_autocmd('VimEnter', {
+        callback = miniMap.open,
+      })
+
+      vim.api.nvim_create_autocmd('WinClosed', {
+        callback = miniMap.refresh,
+      })
+
+      -- Will close the minimap if cursor is underneath it
+      vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+        callback = function()
+          local _, col = unpack(vim.api.nvim_win_get_cursor(0))
+          local width = vim.api.nvim_win_get_width(0)
+          if width - col < 20 then
+            miniMap.close()
+          else
+            miniMap.open()
+          end
+        end,
+      })
+
+      -- Using bufferline instead
+      -- require('mini.tabline').setup()
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren,
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      local miniSurround = require 'mini.surround'
+      miniSurround.setup {
+        mappings = {
+          add = 'ca', -- Add surrounding in Normal and Visual modes
+          delete = 'cd', -- Delete surrounding
+          find = 'cf', -- Find surrounding (to the right)
+          find_left = 'cF', -- Find surrounding (to the left)
+          highlight = 'ch', -- Highlight surrounding
+          replace = 'cr', -- Replace surrounding
+          update_n_lines = 'cn', -- Update `n_lines`
+        },
+      }
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -1075,7 +1169,28 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'python',
+        'javascript',
+        'typescript',
+        'tsx',
+        'yaml',
+        'regex',
+        'toml',
+        'jsdoc',
+        'json',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1102,6 +1217,134 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'akinsho/bufferline.nvim',
+    version = '*',
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    opts = {}
+  },
+
+  {
+    'ogaken-1/wilder.nvim',
+    dependencies = {
+      'romgrk/fzy-lua-native',
+      'PCRE2Project/pcre2',
+      'sharkdp/fd',
+      'nixprime/cpsm',
+    },
+    config = function()
+      local wilder = require('wilder')
+
+      wilder.setup({
+        modes = {':', '/', '?'},
+        next_key = '<TAB>',
+        previous_key = '<S-TAB>'
+      })
+
+
+      wilder.set_option('pipeline', {
+        wilder.branch(
+          wilder.python_file_finder_pipeline({
+            file_command = { 'fd', '-tf'},
+            dir_command = {'fd', '-td'},
+            -- filters = {'cpsm_filter'},
+            filters = {'fuzzy_filter', 'difflib_sorter'},
+          }),
+          wilder.substitute_pipeline({
+            pipeline = wilder.python_search_pipeline({
+              skip_cmdtype_check = 1,
+              ignore = { 'node_modules', '.git', 'build' },
+              pattern = wilder.python_fuzzy_pattern({
+                start_at_boundary = 0,
+              }),
+            }),
+          }),
+          wilder.cmdline_pipeline({
+            fuzzy = 1,
+            fuzzy_filter = wilder.lua_fzy_filter(),
+            debounce = 10
+          }),
+          wilder.vim_search_pipeline(), wilder.python_search_pipeline({
+            pattern = wilder.python_fuzzy_pattern({
+              start_at_boundary = 0,
+            }),
+            debounce = 10,
+          })
+        ),
+      })
+
+      local highlighters = {
+        wilder.pcre2_highlighter(),
+        wilder.lua_fzy_filter()
+      }
+
+      local popupmenu_renderer = wilder.popupmenu_renderer(
+        wilder.popupmenu_border_theme({
+          border = 'rounded',
+          empty_message = wilder.popupmenu_empty_message_with_spinner(),
+          highlighter = highlighters,
+          left = {
+            ' ',
+            wilder.popupmenu_devicons(),
+            wilder.popupmenu_buffer_flags({
+              flags = ' a + ',
+              icons = {['+'] = '', a = '', h = ''}
+            })
+          },
+          right = {
+            ' ',
+            wilder.popupmenu_scrollbar()
+          },
+        })
+      )
+
+      local wildmenu_renderer = wilder.wildmenu_renderer({
+          highlighter = highlighters,
+          separator = ' · ',
+          left = {' ', wilder.wildmenu_spinner(), ' '},
+          right = {' ', wilder.wildmenu_index()},
+        })
+
+
+      wilder.set_option('renderer', wilder.renderer_mux({
+        [':'] = popupmenu_renderer,
+        ['/'] = popupmenu_renderer,
+        substitute = wildmenu_renderer
+      }))
+      -- wilder.set_option('renderer', wilder.renderer_mux({
+      --   [':'] = wilder.popupmenu_renderer({
+      --     wilder.popupmenu_palette_theme({
+      --       -- 'single', 'double', 'rounded' or 'solid'
+      --       -- can also be a list of 8 characters, see :h wilder#popupmenu_palette_theme() for more details
+      --       border = 'rounded',
+      --       max_height = '75%',      -- max height of the palette
+      --       min_height = 0,          -- set to the same as 'max_height' for a fixed height window
+      --       prompt_position = 'top', -- 'top' or 'bottom' to set the location of the prompt
+      --       reverse = 0,             -- set to 1 to reverse the order of the list, use in combination with 'prompt_position'
+      --       left = {' ', wilder.popupmenu_devicons()},
+      --       right = {' ', wilder.popupmenu_scrollbar()},
+      --       highlighter = {
+      --         wilder.lua_pcre2_highlighter(), -- requires `luarocks install pcre2`
+      --         wilder.lua_fzy_highlighter(),   -- requires fzy-lua-native vim plugin found
+      --         -- at https://github.com/romgrk/fzy-lua-native
+      --         -- f4468f
+      --       },
+      --       highlights = {
+      --         accent = wilder.make_hl('WilderAccent', 'Pmenu', {{a = 1}, {a = 1}, {foreground = '#f06129'}}),
+      --         selected_accent = wilder.make_h1('WilderSelectAccent', 'Pmenu', {
+      --           {a=1},
+      --           {a=1},
+      --           {foreground = '#f06129', "bold", "underline"}
+      --         })
+      --       },
+      --     })
+      --   }),
+      --   ['/'] = wilder.wildmenu_renderer({
+      --     highlighter = wilder.lua_fzy_highlighter()
+      --   }),
+      -- }))
+    end
+  },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
