@@ -735,6 +735,8 @@ require('lazy').setup({
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
+        ensure_installed = vim.tbl_keys(servers),
+        automatic_installation = true,
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
@@ -866,6 +868,19 @@ require('lazy').setup({
   {
     'tzachar/cmp-fuzzy-path',
     dependencies = { 'hrsh7th/nvim-cmp', 'tzachar/fuzzy.nvim' },
+    config = function()
+      local cmp = require 'cmp'
+      cmp.setup {
+        sources = cmp.config.sources({
+          {
+            name = 'fuzzy_path',
+            option = {
+              fd_cmd = { 'fdfind', '-d', '20', '-p'}
+            }
+          }
+        })
+      }
+    end
   },
 
   { -- Autocompletion
@@ -1007,22 +1022,6 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
-
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
-    end,
-  },
   {
     'catppuccin/nvim',
     name = 'catppuccin',
