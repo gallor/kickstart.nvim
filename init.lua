@@ -156,6 +156,7 @@ vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.opt.cursorline = true
+vim.opt.cursorlineopt = 'number'
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -196,6 +197,25 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+
+-- Toggle Inline Diagnostics
+vim.diagnostic.disable()
+
+vim.api.nvim_create_user_command(
+  'DiagnosticsToggleVirtualText',
+  function()
+    local current_value = vim.diagnostic.config().virtual_text
+    if current_value then
+      vim.diagnostic.config({virtual_text = false})
+    else
+      vim.diagnostic.config({virtual_text = true})
+    end
+  end,
+  {}
+)
+
+vim.keymap.set('n', '<Leader>ii', ':lua vim.cmd("DiagnosticsToggleVirtualText")<CR>', { noremap = true, silent = true})
+--
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -660,17 +680,12 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         arduino_language_server = {},
+        bashls = {},
         ruff = {},
-        pyright = {
-          settings = {
-            pyright = {
-
-            }
-          }
+        -- pyright = {},
           -- before_init = function(_, config)
           --   config.settings.python.analysis.stubPath = vim.fs.joinpath(vim.fn.stdpath, "data", "lazy", "python-type-stubs")
           -- end
-        },
         eslint = {},
         cssls = {},
         jsonls = {},
@@ -765,6 +780,7 @@ require('lazy').setup({
         python = { 'ruff' },
         javascript = { 'standardjs' },
         typescript = { 'ts-standard' },
+        yaml = { 'yamlfmt' }
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1245,8 +1261,8 @@ require('lazy').setup({
       wilder.set_option('pipeline', {
         wilder.branch(
           wilder.python_file_finder_pipeline({
-            file_command = { 'fd', '-tf'},
-            dir_command = {'fd', '-td'},
+            file_command = { 'fdfind', '-tf'},
+            dir_command = {'fdfind', '-td'},
             -- filters = {'cpsm_filter'},
             filters = {'fuzzy_filter', 'difflib_sorter'},
           }),
