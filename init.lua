@@ -197,6 +197,10 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Enable being able to move up and down in the same line
+vim.keymap.set('n', 'k', 'gk', { desc = 'Move up within the same line of text' })
+vim.keymap.set('n', 'j', 'gj', { desc = 'Move down within the same line of text' })
+
 
 -- Toggle Inline Diagnostics
 vim.diagnostic.disable()
@@ -925,6 +929,7 @@ require('lazy').setup({
       'vrslev/cmp-pypi',
       -- 'Snikimonkd/cmp-go-pkgs',
       'epwalsh/obsidian.nvim',
+      'onsails/lspkind.nvim',
       'https://codeberg.org/FelipeLema/cmp-async-path',
     },
     config = function()
@@ -1239,127 +1244,127 @@ require('lazy').setup({
     opts = {}
   },
 
-  {
-    'ogaken-1/wilder.nvim',
-    dependencies = {
-      'romgrk/fzy-lua-native',
-      'PCRE2Project/pcre2',
-      'sharkdp/fd',
-      'nixprime/cpsm',
-    },
-    config = function()
-      local wilder = require('wilder')
-
-      wilder.setup({
-        modes = {':', '/', '?'},
-        next_key = '<TAB>',
-        previous_key = '<S-TAB>'
-      })
-
-
-      wilder.set_option('pipeline', {
-        wilder.branch(
-          wilder.python_file_finder_pipeline({
-            file_command = { 'fdfind', '-tf'},
-            dir_command = {'fdfind', '-td'},
-            -- filters = {'cpsm_filter'},
-            filters = {'fuzzy_filter', 'difflib_sorter'},
-          }),
-          wilder.substitute_pipeline({
-            pipeline = wilder.python_search_pipeline({
-              skip_cmdtype_check = 1,
-              ignore = { 'node_modules', '.git', 'build' },
-              pattern = wilder.python_fuzzy_pattern({
-                start_at_boundary = 0,
-              }),
-            }),
-          }),
-          wilder.cmdline_pipeline({
-            fuzzy = 1,
-            fuzzy_filter = wilder.lua_fzy_filter(),
-            debounce = 10
-          }),
-          wilder.vim_search_pipeline(), wilder.python_search_pipeline({
-            pattern = wilder.python_fuzzy_pattern({
-              start_at_boundary = 0,
-            }),
-            debounce = 10,
-          })
-        ),
-      })
-
-      local highlighters = {
-        wilder.pcre2_highlighter(),
-        wilder.lua_fzy_filter()
-      }
-
-      local popupmenu_renderer = wilder.popupmenu_renderer(
-        wilder.popupmenu_border_theme({
-          border = 'rounded',
-          empty_message = wilder.popupmenu_empty_message_with_spinner(),
-          highlighter = highlighters,
-          left = {
-            ' ',
-            wilder.popupmenu_devicons(),
-            wilder.popupmenu_buffer_flags({
-              flags = ' a + ',
-              icons = {['+'] = '', a = '', h = ''}
-            })
-          },
-          right = {
-            ' ',
-            wilder.popupmenu_scrollbar()
-          },
-        })
-      )
-
-      local wildmenu_renderer = wilder.wildmenu_renderer({
-          highlighter = highlighters,
-          separator = ' · ',
-          left = {' ', wilder.wildmenu_spinner(), ' '},
-          right = {' ', wilder.wildmenu_index()},
-        })
-
-
-      wilder.set_option('renderer', wilder.renderer_mux({
-        [':'] = popupmenu_renderer,
-        ['/'] = popupmenu_renderer,
-        substitute = wildmenu_renderer
-      }))
-      -- wilder.set_option('renderer', wilder.renderer_mux({
-      --   [':'] = wilder.popupmenu_renderer({
-      --     wilder.popupmenu_palette_theme({
-      --       -- 'single', 'double', 'rounded' or 'solid'
-      --       -- can also be a list of 8 characters, see :h wilder#popupmenu_palette_theme() for more details
-      --       border = 'rounded',
-      --       max_height = '75%',      -- max height of the palette
-      --       min_height = 0,          -- set to the same as 'max_height' for a fixed height window
-      --       prompt_position = 'top', -- 'top' or 'bottom' to set the location of the prompt
-      --       reverse = 0,             -- set to 1 to reverse the order of the list, use in combination with 'prompt_position'
-      --       left = {' ', wilder.popupmenu_devicons()},
-      --       right = {' ', wilder.popupmenu_scrollbar()},
-      --       highlighter = {
-      --         wilder.lua_pcre2_highlighter(), -- requires `luarocks install pcre2`
-      --         wilder.lua_fzy_highlighter(),   -- requires fzy-lua-native vim plugin found
-      --         -- at https://github.com/romgrk/fzy-lua-native
-      --         -- f4468f
-      --       },
-      --       highlights = {
-      --         accent = wilder.make_hl('WilderAccent', 'Pmenu', {{a = 1}, {a = 1}, {foreground = '#f06129'}}),
-      --         selected_accent = wilder.make_h1('WilderSelectAccent', 'Pmenu', {
-      --           {a=1},
-      --           {a=1},
-      --           {foreground = '#f06129', "bold", "underline"}
-      --         })
-      --       },
-      --     })
-      --   }),
-      --   ['/'] = wilder.wildmenu_renderer({
-      --     highlighter = wilder.lua_fzy_highlighter()
-      --   }),
-      -- }))
-    end
-  },
+  -- {
+  --   'ogaken-1/wilder.nvim',
+  --   dependencies = {
+  --     'romgrk/fzy-lua-native',
+  --     'PCRE2Project/pcre2',
+  --     'sharkdp/fd',
+  --     'nixprime/cpsm',
+  --   },
+  --   config = function()
+  --     local wilder = require('wilder')
+  --
+  --     wilder.setup({
+  --       modes = {':', '/', '?'},
+  --       next_key = '<TAB>',
+  --       previous_key = '<S-TAB>'
+  --     })
+  --
+  --
+  --     wilder.set_option('pipeline', {
+  --       wilder.branch(
+  --         wilder.python_file_finder_pipeline({
+  --           file_command = { 'fdfind', '-tf'},
+  --           dir_command = {'fdfind', '-td'},
+  --           -- filters = {'cpsm_filter'},
+  --           filters = {'fuzzy_filter', 'difflib_sorter'},
+  --         }),
+  --         wilder.substitute_pipeline({
+  --           pipeline = wilder.python_search_pipeline({
+  --             skip_cmdtype_check = 1,
+  --             ignore = { 'node_modules', '.git', 'build' },
+  --             pattern = wilder.python_fuzzy_pattern({
+  --               start_at_boundary = 0,
+  --             }),
+  --           }),
+  --         }),
+  --         wilder.cmdline_pipeline({
+  --           fuzzy = 1,
+  --           fuzzy_filter = wilder.lua_fzy_filter(),
+  --           debounce = 10
+  --         }),
+  --         wilder.vim_search_pipeline(), wilder.python_search_pipeline({
+  --           pattern = wilder.python_fuzzy_pattern({
+  --             start_at_boundary = 0,
+  --           }),
+  --           debounce = 10,
+  --         })
+  --       ),
+  --     })
+  --
+  --     local highlighters = {
+  --       wilder.pcre2_highlighter(),
+  --       wilder.lua_fzy_filter()
+  --     }
+  --
+  --     local popupmenu_renderer = wilder.popupmenu_renderer(
+  --       wilder.popupmenu_border_theme({
+  --         border = 'rounded',
+  --         empty_message = wilder.popupmenu_empty_message_with_spinner(),
+  --         highlighter = highlighters,
+  --         left = {
+  --           ' ',
+  --           wilder.popupmenu_devicons(),
+  --           wilder.popupmenu_buffer_flags({
+  --             flags = ' a + ',
+  --             icons = {['+'] = '', a = '', h = ''}
+  --           })
+  --         },
+  --         right = {
+  --           ' ',
+  --           wilder.popupmenu_scrollbar()
+  --         },
+  --       })
+  --     )
+  --
+  --     local wildmenu_renderer = wilder.wildmenu_renderer({
+  --         highlighter = highlighters,
+  --         separator = ' · ',
+  --         left = {' ', wilder.wildmenu_spinner(), ' '},
+  --         right = {' ', wilder.wildmenu_index()},
+  --       })
+  --
+  --
+  --     wilder.set_option('renderer', wilder.renderer_mux({
+  --       [':'] = popupmenu_renderer,
+  --       ['/'] = popupmenu_renderer,
+  --       substitute = wildmenu_renderer
+  --     }))
+  --     -- wilder.set_option('renderer', wilder.renderer_mux({
+  --     --   [':'] = wilder.popupmenu_renderer({
+  --     --     wilder.popupmenu_palette_theme({
+  --     --       -- 'single', 'double', 'rounded' or 'solid'
+  --     --       -- can also be a list of 8 characters, see :h wilder#popupmenu_palette_theme() for more details
+  --     --       border = 'rounded',
+  --     --       max_height = '75%',      -- max height of the palette
+  --     --       min_height = 0,          -- set to the same as 'max_height' for a fixed height window
+  --     --       prompt_position = 'top', -- 'top' or 'bottom' to set the location of the prompt
+  --     --       reverse = 0,             -- set to 1 to reverse the order of the list, use in combination with 'prompt_position'
+  --     --       left = {' ', wilder.popupmenu_devicons()},
+  --     --       right = {' ', wilder.popupmenu_scrollbar()},
+  --     --       highlighter = {
+  --     --         wilder.lua_pcre2_highlighter(), -- requires `luarocks install pcre2`
+  --     --         wilder.lua_fzy_highlighter(),   -- requires fzy-lua-native vim plugin found
+  --     --         -- at https://github.com/romgrk/fzy-lua-native
+  --     --         -- f4468f
+  --     --       },
+  --     --       highlights = {
+  --     --         accent = wilder.make_hl('WilderAccent', 'Pmenu', {{a = 1}, {a = 1}, {foreground = '#f06129'}}),
+  --     --         selected_accent = wilder.make_h1('WilderSelectAccent', 'Pmenu', {
+  --     --           {a=1},
+  --     --           {a=1},
+  --     --           {foreground = '#f06129', "bold", "underline"}
+  --     --         })
+  --     --       },
+  --     --     })
+  --     --   }),
+  --     --   ['/'] = wilder.wildmenu_renderer({
+  --     --     highlighter = wilder.lua_fzy_highlighter()
+  --     --   }),
+  --     -- }))
+  --   end
+  -- },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
