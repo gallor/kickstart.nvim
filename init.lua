@@ -776,7 +776,7 @@ require('lazy').setup({
         arduino_language_server = {},
         bashls = {},
         ruff = {},
-        -- pyright = {},
+        pyright = {},
           -- before_init = function(_, config)
           --   config.settings.python.analysis.stubPath = vim.fs.joinpath(vim.fn.stdpath, "data", "lazy", "python-type-stubs")
           -- end
@@ -790,7 +790,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {},
+        tsserver = {},
         --
 
         lua_ls = {
@@ -1119,7 +1119,7 @@ require('lazy').setup({
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
-      require('catppuccin').setup({
+      require('catppuccin').setup {
           flavour = 'frappe',
           dim_inactive = {
             enabled = true,
@@ -1144,12 +1144,13 @@ require('lazy').setup({
               enabled = true,
             },
           },
-      })
+        }
+      end,
 
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme "catppuccin"
+      -- vim.cmd.colorscheme "catppuccin"
   },
 
   -- Highlight todo, notes, etc in comments
