@@ -1,0 +1,5 @@
+return {
+  {
+    'schickling/vim-bufonly',
+  },
+}

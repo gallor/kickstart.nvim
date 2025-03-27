@@ -33,6 +33,7 @@ return {
       --  nvim-cmp does not ship with all sources by default. They are split
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-cmdline',
       'tzachar/cmp-fuzzy-path',
       'tzachar/fuzzy.nvim',
       -- 'hrsh7th/cmp-path',
@@ -80,41 +81,55 @@ return {
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
-          -- ['<CR>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false },
+          -- ['<CR>'] = cmp.mapping {
+          -- i = cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = true },
           -- Safely select entries with <CR>
-          ['<CR>'] = cmp.mapping {
+          -- i = function(fallback)
+          --   if cmp.visible() and cmp.get_active_entry() then
+          --     cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
+          --   else
+          --     fallback()
+          --   end
+          -- end,
+          -- s = cmp.mapping.confirm { select = true },
+          -- c = cmp.mapping.confirm { select = true },
+          -- },
+          -- ['<Tab>'] = cmp.mapping.select_next_item(),
+          -- Confirm candidate immediately when theres only one entry
+          ['<TAB>'] = cmp.mapping {
             i = function(fallback)
-              if cmp.visible() and cmp.get_active_entry() then
-                cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
+              if cmp.visible() then
+                if #cmp.get_entries() == 1 then
+                  cmp.confirm { select = true }
+                else
+                  cmp.select_next_item()
+                end
+                --[[ Replace with your snippet engine (see above sections on this page)
+                elseif snippy.can_expand_or_advance() then
+                  snippy.expand_or_advance() ]]
+              elseif has_words_before() then
+                cmp.complete()
+                if #cmp.get_entries() == 1 then
+                  cmp.confirm { select = true }
+                end
               else
                 fallback()
               end
             end,
-            s = cmp.mapping.confirm { select = true },
-            c = cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = true },
+            s = cmp.mapping.select_next_item(),
+            c = cmp.mapping.select_next_item(),
           },
-          -- ['<Tab>'] = cmp.mapping.select_next_item(),
-          -- Confirm candidate immediately when theres only one entry
-          ['<TAB>'] = cmp.mapping(function(fallback)
+          -- ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
-              if #cmp.get_entries() == 1 then
-                cmp.confirm { select = true }
-              else
-                cmp.select_next_item()
-              end
-              --[[ Replace with your snippet engine (see above sections on this page)
-              elseif snippy.can_expand_or_advance() then
-                snippy.expand_or_advance() ]]
-            elseif has_words_before() then
-              cmp.complete()
-              if #cmp.get_entries() == 1 then
-                cmp.confirm { select = true }
-              end
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
             else
               fallback()
             end
-          end, { 'i', 's' }),
-          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          end, { 'i', 's', 'c' }),
 
           -- Manually trigger a completion from nvim-cmp.
           --  Generally you don't need this, because nvim-cmp will display
@@ -156,10 +171,21 @@ return {
         },
       }
 
-      cmp.setup.cmdline(':', {
-        sources = cmp.config.sources {
-          { name = 'fuzzy_path' },
+      cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer' },
         },
+      })
+
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'fuzzy_path' },
+        }, {
+          { name = 'cmdline' },
+        }),
+        matching = { disallow_symbol_nonprefix_matching = false },
       })
     end,
   },

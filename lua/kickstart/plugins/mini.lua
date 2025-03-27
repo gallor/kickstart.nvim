@@ -17,12 +17,12 @@ return {
       -- Trigger Commenting
       require('mini.comment').setup {
         version = '*',
-        mappings = {
-          comment = '<leader>c<space>',
-          comment_line = '<leader>c<space>',
-          comment_visual = '<leader>c<space>',
-          textobject = '',
-        },
+        -- mappings = {
+        --   comment = '<leader>c<space>',
+        --   comment_line = '<leader>c<space>',
+        --   comment_visual = '<leader>c<space>',
+        --   textobject = '',
+        -- },
       }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
