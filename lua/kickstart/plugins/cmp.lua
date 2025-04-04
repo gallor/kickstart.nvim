@@ -58,69 +58,42 @@ return {
             luasnip.lsp_expand(args.body)
           end,
         },
-        completion = { completeopt = 'menu,menuone,noinsert' },
+        preselect = cmp.PreselectMode.None,
+        completion = { completeopt = 'menu,menuone,noselect' },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
         --
         -- No, but seriously. Please read `:help ins-completion`, it is really good!
         mapping = cmp.mapping.preset.insert {
-          -- Select the [n]ext item
-          -- ['<C-n>'] = cmp.mapping.select_next_item(),
-          -- Select the [p]revious item
-          -- ['<C-p>'] = cmp.mapping.select_prev_item(),
-
           -- Scroll the documentation window [b]ack / [f]orward
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
 
-          -- Accept ([y]es) the completion.
-          --  This will auto-import if your LSP supports it.
-          --  This will expand snippets if the LSP sent a snippet.
-          -- ['<C-y>'] = cmp.mapping.confirm { select = true },
-
-          -- If you prefer more traditional completion keymaps,
-          -- you can uncomment the following lines
-          ['<CR>'] = cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false },
-          -- ['<CR>'] = cmp.mapping {
-          -- i = cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = true },
           -- Safely select entries with <CR>
-          -- i = function(fallback)
-          --   if cmp.visible() and cmp.get_active_entry() then
-          --     cmp.mapping.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
-          --   else
-          --     fallback()
-          --   end
-          -- end,
-          -- s = cmp.mapping.confirm { select = true },
-          -- c = cmp.mapping.confirm { select = true },
-          -- },
-          -- ['<Tab>'] = cmp.mapping.select_next_item(),
-          -- Confirm candidate immediately when theres only one entry
-          ['<TAB>'] = cmp.mapping {
-            i = function(fallback)
-              if cmp.visible() then
-                if #cmp.get_entries() == 1 then
-                  cmp.confirm { select = true }
-                else
-                  cmp.select_next_item()
-                end
-                --[[ Replace with your snippet engine (see above sections on this page)
-                elseif snippy.can_expand_or_advance() then
-                  snippy.expand_or_advance() ]]
-              elseif has_words_before() then
-                cmp.complete()
-                if #cmp.get_entries() == 1 then
-                  cmp.confirm { select = true }
-                end
-              else
-                fallback()
-              end
-            end,
-            s = cmp.mapping.select_next_item(),
-            c = cmp.mapping.select_next_item(),
+          ['<CR>'] = cmp.mapping(function(fallback)
+            if cmp.visible() and cmp.get_active_entry() then
+              cmp.confirm { behavior = cmp.ConfirmBehavior.Replace, select = false }
+            else
+              fallback()
+            end
+          end, { 'i', 'c' }),
+          ['<CR>'] = cmp.mapping {
+            s = cmp.mapping.confirm { select = true },
           },
-          -- ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+          -- Confirm candidate immediately when theres only one entry
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            -- This little snippet will confirm with tab, and if no entry is selected, will confirm the first item
+            if cmp.visible() then
+              local entry = cmp.get_selected_entry()
+              if not entry then
+                cmp.select_next_item { behavior = cmp.SelectBehavior.Select }
+              end
+              cmp.confirm()
+            else
+              fallback()
+            end
+          end, { 'i', 's', 'c' }),
           ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_prev_item()
