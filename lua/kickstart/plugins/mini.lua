@@ -25,6 +25,9 @@ return {
         -- },
       }
 
+      -- Git diff and hunk comparison
+      require('mini.diff').setup ()
+
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
