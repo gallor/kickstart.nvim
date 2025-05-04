@@ -151,7 +151,7 @@ return {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
           { name = 'fuzzy_path', option = {
-            fd_cmd = { 'fdfind', '-d', '20', '-p' },
+            fd_cmd = { 'fd', '-d', '20', '-p' },
           } },
         }, {
           { name = 'cmdline' },
