@@ -59,7 +59,9 @@ return {
           end,
         },
         preselect = cmp.PreselectMode.None,
-        completion = { completeopt = 'menu,menuone,noselect' },
+        completion = {
+          completeopt = 'menu,menuone,noselect',
+        },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
@@ -151,7 +153,7 @@ return {
         mapping = cmp.mapping.preset.cmdline(),
         sources = cmp.config.sources({
           { name = 'fuzzy_path', option = {
-            fd_cmd = { 'fdfind', '-d', '20', '-p' },
+            fd_cmd = { 'fdfind', '-d', '20', '-p', '--hidden' },
           } },
         }, {
           { name = 'cmdline' },

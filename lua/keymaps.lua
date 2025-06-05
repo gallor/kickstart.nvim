@@ -39,7 +39,7 @@ vim.keymap.set('n', 'k', 'gk', { desc = 'Move up within the same line of text' }
 vim.keymap.set('n', 'j', 'gj', { desc = 'Move down within the same line of text' })
 
 -- Map switching between buffers easier
-vim.keymap.set('n', '<leader>h', '<cmd>:bprevious<CR>', { desc = 'Open previous buffer' })
+vim.keymap.set('n', '<leader>k', '<cmd>:bprevious<CR>', { desc = 'Open previous buffer' })
 vim.keymap.set('n', '<leader>l', '<cmd>:bnext<CR>', { desc = 'Open next buffer' })
 vim.keymap.set('n', '<leader>bq', '<cmd>:bdelete<CR>', { desc = 'Close buffer' })
 vim.keymap.set('n', '<leader>bc', '<cmd>:BufOnly<CR>', { desc = 'Close all buffers save the last one' })
