@@ -59,7 +59,10 @@ return {
           end,
         },
         preselect = cmp.PreselectMode.None,
-        completion = { completeopt = 'menu,menuone,noselect' },
+        completion = {
+          keyword_length = 3,
+          completeopt = 'menu,menuone,noselect',
+        },
 
         -- For an understanding of why these mappings were
         -- chosen, you will need to read `:help ins-completion`
