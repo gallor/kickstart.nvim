@@ -60,6 +60,7 @@ return {
         },
         preselect = cmp.PreselectMode.None,
         completion = {
+          keyword_length = 3,
           completeopt = 'menu,menuone,noselect',
         },
 
