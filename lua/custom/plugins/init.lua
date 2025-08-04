@@ -7,4 +7,8 @@ return {
     'rcarriga/nvim-notify',
     opts = {},
   },
+  {
+    'Vimjas/vim-python-pep8-indent',
+    config = function() end,
+  },
 }
