@@ -212,6 +212,7 @@ return {
         -- clangd = {},
         -- gopls = {},
         pyright = {},
+        basedpyright = {},
         rust_analyzer = {},
         bashls = {},
         ruff = {},

@@ -16,3 +16,5 @@ vim.api.nvim_create_autocmd({ 'FocusLost' }, {
   desc = 'Auto Save buffers when focus is moved',
   command = 'silent! wa',
 })
+
+vim.cmd [[autocmd ColorScheme * highlight LineNr guifg=#9da0b4]]
