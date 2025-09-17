@@ -33,7 +33,7 @@ return {
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        python = { 'ruff' },
+        python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
         javascript = { 'standardjs' },
         typescript = { 'ts-standard' },
         yaml = { 'yamlfmt' },
