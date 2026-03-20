@@ -9,7 +9,7 @@ return {
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '0.1.x',
+    branch = 'master',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -65,6 +65,18 @@ return {
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
+          },
+        },
+        defaults = {
+          layout_strategy = 'vertical',
+          layout_config = {
+            prompt_position = 'top',
+          },
+          path_display = {
+            'truncate',
+            filename_first = {
+              reverse_directories = false,
+            },
           },
         },
       }
