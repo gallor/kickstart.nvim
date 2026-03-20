@@ -211,24 +211,41 @@ return {
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {
+        -- pyright = {
+        --   settings = {
+        --     pyright = {
+        --       -- Using Ruff's import organizer
+        --       disableOrganizeImports = true,
+        --     },
+        --     python = {
+        --       analysis = {
+        --         -- Ignore all files for analysis to exclusively use Ruff for linting
+        --         ignore = { '*' },
+        --       },
+        --     },
+        --   },
+        -- },
+        basedpyright = {
           settings = {
-            pyright = {
-              -- Using Ruff's import organizer
+            basedpyright = {
               disableOrganizeImports = true,
+              typeCheckingMode = "standard",
+              reportAttributeAccessIssue = false
             },
             python = {
               analysis = {
-                -- Ignore all files for analysis to exclusively use Ruff for linting
                 ignore = { '*' },
               },
             },
           },
         },
-        basedpyright = {},
+        ruff = {
+          init_options = {
+            settings = {}
+          }
+        },
         rust_analyzer = {},
         bashls = {},
-        ruff = {},
         eslint = {},
         cssls = {},
         jsonls = {},
@@ -259,6 +276,21 @@ return {
           },
         },
       }
+
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client == nil then
+            return
+          end
+          if client.name == 'ruff' then
+            -- Disable hover in favor of Pyright
+            client.server_capabilities.hoverProvider = false
+          end
+        end,
+        desc = 'LSP: Disable hover capability from Ruff',
+      })
 
       -- Ensure the servers and tools above are installed
       --

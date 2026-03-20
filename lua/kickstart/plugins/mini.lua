@@ -12,10 +12,10 @@ return {
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      require('mini.ai').setup({ n_lines = 500 })
 
       -- Trigger Commenting
-      require('mini.comment').setup {
+      require('mini.comment').setup({
         version = '*',
         -- mappings = {
         --   comment = '<leader>c<space>',
@@ -23,24 +23,47 @@ return {
         --   comment_visual = '<leader>c<space>',
         --   textobject = '',
         -- },
-      }
+      })
 
       -- Git diff and hunk comparison
-      require('mini.diff').setup ()
+      require('mini.diff').setup()
+
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      require('mini.surround').setup({
+        mappings = {
+          add = 'dsa', -- Add surrounding in Normal and Visual modes
+          delete = 'dsd', -- Delete surrounding
+          find = 'dsf', -- Find surrounding (to the right)
+          find_left = 'dsF', -- Find surrounding (to the left)
+          highlight = 'dsh', -- Highlight surrounding
+          replace = 'dsr', -- Replace surrounding
+
+          suffix_last = 'l', -- Suffix to search with "prev" method
+          suffix_next = 'n', -- Suffix to search with "next" method
+        },
+      })
+
+      local MiniMap = require 'mini.map'
+      MiniMap.setup()
+
+      vim.keymap.set('n', '<leader>mc', MiniMap.close, { desc = "Close MiniMap" })
+      vim.keymap.set('n', '<leader>mf', MiniMap.toggle_focus, { desc = "Toggle and Focus MiniMap" })
+      vim.keymap.set('n', '<leader>mo', MiniMap.open, { desc = "Open MiniMap" })
+      vim.keymap.set('n', '<leader>mr', MiniMap.refresh, { desc = "Refresh MiniMap" })
+      vim.keymap.set('n', '<leader>ms', MiniMap.toggle_side, { desc = "Toggle MiniMap Side" })
+      vim.keymap.set('n', '<leader>mt', MiniMap.toggle, { desc = "Toggle MiniMap" })
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
       local statusline = require 'mini.statusline'
       -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      statusline.setup({ use_icons = vim.g.have_nerd_font })
 
       -- You can configure sections in the statusline by overriding their
       -- default behavior. For example, here we set the section for

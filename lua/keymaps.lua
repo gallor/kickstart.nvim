@@ -63,3 +63,5 @@ vim.keymap.set('n', '[t', function()
 end, { desc = 'Previous todo comment' })
 
 vim.keymap.set('n', '<leader>tt', ':ToggleTerm dir=%:p:h<CR>', { desc = '[T]erminal', silent = true })
+
+vim.keymap.set('n', '<leader>gh', vim.diagnostic.open_float, { desc = 'Open error message floating window' })
