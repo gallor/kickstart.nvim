@@ -33,22 +33,30 @@ return {
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup({
-        mappings = {
-          add = 'dsa', -- Add surrounding in Normal and Visual modes
-          delete = 'dsd', -- Delete surrounding
-          find = 'dsf', -- Find surrounding (to the right)
-          find_left = 'dsF', -- Find surrounding (to the left)
-          highlight = 'dsh', -- Highlight surrounding
-          replace = 'dsr', -- Replace surrounding
-
-          suffix_last = 'l', -- Suffix to search with "prev" method
-          suffix_next = 'n', -- Suffix to search with "next" method
-        },
-      })
+      -- require('mini.surround').setup({
+      --   mappings = {
+      --     add = 'dsa', -- Add surrounding in Normal and Visual modes
+      --     delete = 'dsd', -- Delete surrounding
+      --     find = 'dsf', -- Find surrounding (to the right)
+      --     find_left = 'dsF', -- Find surrounding (to the left)
+      --     highlight = 'dsh', -- Highlight surrounding
+      --     replace = 'dsr', -- Replace surrounding
+      --
+      --     suffix_last = 'l', -- Suffix to search with "prev" method
+      --     suffix_next = 'n', -- Suffix to search with "next" method
+      --   },
+      -- })
 
       local MiniMap = require 'mini.map'
-      MiniMap.setup()
+      MiniMap.setup({
+        integrations = {
+          MiniMap.gen_integration.gitsigns(),
+          MiniMap.gen_integration.builtin_search()
+        },
+        symbols = {
+          encode = MiniMap.gen_encode_symbols.dot("4x2"),
+        },
+      })
 
       vim.keymap.set('n', '<leader>mc', MiniMap.close, { desc = "Close MiniMap" })
       vim.keymap.set('n', '<leader>mf', MiniMap.toggle_focus, { desc = "Toggle and Focus MiniMap" })
