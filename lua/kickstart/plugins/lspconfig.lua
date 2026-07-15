@@ -18,15 +18,12 @@ return {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-      { 'williamboman/mason.nvim', opts = {} },
-      'williamboman/mason-lspconfig.nvim',
+      { 'mason-org/mason.nvim', opts = {} },
+      'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
       { 'j-hui/fidget.nvim', opts = {} },
-
-      -- Allows extra capabilities provided by nvim-cmp
-      'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
       -- This function gets run when an LSP attaches to a particular buffer.
@@ -94,9 +91,9 @@ return {
         virtual_text = false,
       }
 
-      -- Capabilities for nvim-cmp
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+      -- Completion capabilities are contributed by blink.cmp, which registers
+      -- them globally via `vim.lsp.config('*', ...)` on Neovim 0.11+. No manual
+      -- capabilities wiring is needed here.
 
       -- Servers
       local servers = {
@@ -176,17 +173,21 @@ return {
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require('mason-lspconfig').setup {
-        ensure_installed = {}, -- Kickstart populates installs via mason-tool-installer
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
-      }
+      -- Enable servers via Neovim's native LSP API (0.11+).
+      --
+      -- nvim-lspconfig is no longer the LSP driver: it now only ships the
+      -- per-server `lsp/<name>.lua` definitions (default `cmd`, `filetypes`,
+      -- `root_markers`) that `vim.lsp.enable` reads. `vim.lsp.config(name, ...)`
+      -- deep-merges our overrides onto that definition (and onto blink.cmp's '*'
+      -- capabilities); `vim.lsp.enable(name)` starts the server on matching buffers.
+      --
+      -- mason-lspconfig stays installed for its package-name mapping (used by
+      -- mason-tool-installer, e.g. `lua_ls` -> `lua-language-server`), but its
+      -- `setup`/`handlers` path is intentionally unused.
+      for name, server in pairs(servers) do
+        vim.lsp.config(name, server)
+        vim.lsp.enable(name)
+      end
     end,
   },
 }

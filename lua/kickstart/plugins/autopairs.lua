@@ -4,13 +4,8 @@
 return {
   'windwp/nvim-autopairs',
   event = 'InsertEnter',
-  -- Optional dependency
-  dependencies = { 'hrsh7th/nvim-cmp' },
-  config = function()
-    require('nvim-autopairs').setup {}
-    -- If you want to automatically add `(` after selecting a function or method
-    local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
-    local cmp = require 'cmp'
-    cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
-  end,
+  -- Handles pairing of brackets/quotes as you type. Completion auto-brackets
+  -- (adding `(` after accepting a function) are handled by blink.cmp's
+  -- `completion.accept.auto_brackets`, so no completion-engine hook is needed.
+  opts = {},
 }

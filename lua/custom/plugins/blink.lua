@@ -40,9 +40,9 @@ return {
       -- example: 'foo_|_bar' will match 'foo_' for 'prefix' and 'foo__bar' for 'full'
       keyword = { range = 'full' },
 
-      -- Disable auto brackets
-      -- NOTE: some LSPs may add auto brackets themselves anyway
-      accept = { auto_brackets = { enabled = false }, },
+      -- Auto-insert brackets after accepting a function/method completion.
+      -- Replaces the old nvim-autopairs + nvim-cmp `confirm_done` hook.
+      accept = { auto_brackets = { enabled = true }, },
 
       -- Don't select by default, auto insert on selection
       list = { selection = { preselect = false, auto_insert = true } },
@@ -74,7 +74,16 @@ return {
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {
-      default = { 'lsp', 'path', 'snippets', 'buffer' },
+      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      providers = {
+        -- lazydev supplies Neovim API completions for Lua config files.
+        -- score_offset 100 makes its items outrank the lua_ls LSP source.
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          score_offset = 100,
+        },
+      },
     },
 
     -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance

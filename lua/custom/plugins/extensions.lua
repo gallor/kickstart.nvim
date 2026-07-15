@@ -3,9 +3,10 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-  -- Obsidian
+  -- Obsidian (maintained community fork; completion via in-process LSP,
+  -- picked up automatically by blink.cmp's `lsp` source).
   {
-    'epwalsh/obsidian.nvim',
+    'obsidian-nvim/obsidian.nvim',
     version = '*',
     lazy = true,
     event = {
@@ -14,7 +15,6 @@ return {
     },
     dependencies = {
       'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
       'nvim-telescope/telescope.nvim',
       'nvim-treesitter/nvim-treesitter',
     },
@@ -26,7 +26,6 @@ return {
         },
       },
       completion = {
-        nvim_cmp = true,
         min_chars = 2,
       },
     },
