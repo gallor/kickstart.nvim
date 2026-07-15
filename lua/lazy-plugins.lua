@@ -22,6 +22,8 @@ require('lazy').setup({
 
   require 'kickstart/plugins/conform',
 
+  require 'kickstart/plugins/treesitter',
+
   require 'kickstart/plugins/todo-comments',
 
   require 'kickstart/plugins/mini',
