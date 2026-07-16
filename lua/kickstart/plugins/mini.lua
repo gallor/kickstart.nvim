@@ -31,9 +31,25 @@ return {
       -- error ("Buffer N is not enabled") on Cursor-managed buffers.
       local ui_enabled = not vim.g.vscode
 
-      -- Git diff and hunk comparison
+      -- Git diff and hunk comparison.
       if ui_enabled then
-        require('mini.diff').setup()
+        -- Belt-and-suspenders: even when setup runs (e.g. if the vscode gate
+        -- above ever fails to catch), disable mini.diff's operator/textobject
+        -- mappings. The "Buffer N is not enabled" crash only reaches us through
+        -- these (`gh`/`gH` apply/reset/textobject, `[h`/`]h` goto), which assume
+        -- an enabled buffer. gitsigns already provides hunk staging/navigation,
+        -- so nothing is lost; mini.diff keeps its visual signs/overlay.
+        require('mini.diff').setup {
+          mappings = {
+            apply = '',
+            reset = '',
+            textobject = '',
+            goto_first = '',
+            goto_prev = '',
+            goto_next = '',
+            goto_last = '',
+          },
+        }
       end
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
