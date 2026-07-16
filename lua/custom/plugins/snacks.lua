@@ -1,5 +1,6 @@
 return {
   "folke/snacks.nvim",
+  cond = not vim.g.vscode, -- dashboard/explorer/picker/UI; redundant under Cursor
   priority = 1000,
   lazy = false,
   ---@type snacks.Config

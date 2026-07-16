@@ -1,5 +1,6 @@
 return {
   'folke/trouble.nvim',
+  cond = not vim.g.vscode, -- diagnostics/symbols UI; Cursor has its own panels
   opts = {}, -- for default options, refer to the configuration section for custom setup.
   cmd = 'Trouble',
   keys = {

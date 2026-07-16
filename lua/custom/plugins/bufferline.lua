@@ -1,5 +1,6 @@
 return {
   'akinsho/bufferline.nvim',
+  cond = not vim.g.vscode, -- Cursor/vscode-neovim owns the tabline
   version = '*',
   dependencies = 'nvim-tree/nvim-web-devicons',
   config = function()

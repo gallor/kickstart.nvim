@@ -25,8 +25,16 @@ return {
         -- },
       })
 
+      -- UI-oriented modules are skipped under vscode-neovim (Cursor), which
+      -- owns the statusline, minimap, and git diff/hunk display. mini.diff in
+      -- particular only attaches to normal file buffers, so its hunk actions
+      -- error ("Buffer N is not enabled") on Cursor-managed buffers.
+      local ui_enabled = not vim.g.vscode
+
       -- Git diff and hunk comparison
-      require('mini.diff').setup()
+      if ui_enabled then
+        require('mini.diff').setup()
+      end
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -47,37 +55,39 @@ return {
       --   },
       -- })
 
-      local MiniMap = require 'mini.map'
-      MiniMap.setup({
-        integrations = {
-          MiniMap.gen_integration.gitsigns(),
-          MiniMap.gen_integration.builtin_search()
-        },
-        symbols = {
-          encode = MiniMap.gen_encode_symbols.dot("4x2"),
-        },
-      })
+      if ui_enabled then
+        local MiniMap = require 'mini.map'
+        MiniMap.setup({
+          integrations = {
+            MiniMap.gen_integration.gitsigns(),
+            MiniMap.gen_integration.builtin_search()
+          },
+          symbols = {
+            encode = MiniMap.gen_encode_symbols.dot("4x2"),
+          },
+        })
 
-      vim.keymap.set('n', '<leader>mc', MiniMap.close, { desc = "Close MiniMap" })
-      vim.keymap.set('n', '<leader>mf', MiniMap.toggle_focus, { desc = "Toggle and Focus MiniMap" })
-      vim.keymap.set('n', '<leader>mo', MiniMap.open, { desc = "Open MiniMap" })
-      vim.keymap.set('n', '<leader>mr', MiniMap.refresh, { desc = "Refresh MiniMap" })
-      vim.keymap.set('n', '<leader>ms', MiniMap.toggle_side, { desc = "Toggle MiniMap Side" })
-      vim.keymap.set('n', '<leader>mt', MiniMap.toggle, { desc = "Toggle MiniMap" })
+        vim.keymap.set('n', '<leader>mc', MiniMap.close, { desc = "Close MiniMap" })
+        vim.keymap.set('n', '<leader>mf', MiniMap.toggle_focus, { desc = "Toggle and Focus MiniMap" })
+        vim.keymap.set('n', '<leader>mo', MiniMap.open, { desc = "Open MiniMap" })
+        vim.keymap.set('n', '<leader>mr', MiniMap.refresh, { desc = "Refresh MiniMap" })
+        vim.keymap.set('n', '<leader>ms', MiniMap.toggle_side, { desc = "Toggle MiniMap Side" })
+        vim.keymap.set('n', '<leader>mt', MiniMap.toggle, { desc = "Toggle MiniMap" })
 
-      -- Simple and easy statusline.
-      --  You could remove this setup call if you don't like it,
-      --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup({ use_icons = vim.g.have_nerd_font })
+        -- Simple and easy statusline.
+        --  You could remove this setup call if you don't like it,
+        --  and try some other statusline plugin
+        local statusline = require 'mini.statusline'
+        -- set use_icons to true if you have a Nerd Font
+        statusline.setup({ use_icons = vim.g.have_nerd_font })
 
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
+        -- You can configure sections in the statusline by overriding their
+        -- default behavior. For example, here we set the section for
+        -- cursor location to LINE:COLUMN
+        ---@diagnostic disable-next-line: duplicate-set-field
+        statusline.section_location = function()
+          return '%2l:%-2v'
+        end
       end
 
       -- ... and there is more!
