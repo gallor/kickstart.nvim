@@ -48,6 +48,24 @@ is still installed but is **no longer the runtime driver** — it only ships the
 
 ## Before You Add a Feature
 
+**Any new UI plugin must be gated with `cond = not vim.g.vscode`.**
+
+This config also runs under vscode-neovim (Cursor), where Neovim is an embedded
+engine and the editor owns the UI. vscode-neovim sets `vim.g.vscode = true`. UI
+plugins loaded there are redundant and contend with Cursor over its managed
+buffers. mini.diff was the first casualty: it only auto-enables on normal file
+buffers, so a hunk action on a Cursor-managed buffer errored with "Buffer N is
+not enabled." Add `cond = not vim.g.vscode` to the Lazy spec of any plugin that
+draws chrome, manages windows, or duplicates editor functionality (statusline,
+tabline, file explorer, terminal, git signs, diagnostics UI, colorscheme,
+completion, indent guides). Keep editing/motion plugins (treesitter, LSP,
+mini.ai/mini.comment, nvim-surround, which-key, telescope) active — they still
+add value inside Cursor. For a spec that bundles both (mini.nvim), gate the UI
+module setups inside `config` behind `if not vim.g.vscode then ... end` rather
+than the whole spec. Currently gated: bufferline, lualine, trouble, snacks,
+catppuccin, toggleterm, neo-tree, gitsigns, indent-blankline, blink.cmp, and
+mini.diff/mini.map/mini.statusline.
+
 **Why is blink.cmp the only completion engine (no nvim-cmp)?**
 
 nvim-cmp was fully removed in favor of blink.cmp. Do not re-add `cmp-nvim-lsp` or
