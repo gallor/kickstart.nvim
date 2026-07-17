@@ -1,6 +1,5 @@
 return {
   'nvim-lualine/lualine.nvim',
-  cond = not vim.g.vscode, -- Cursor/vscode-neovim owns the statusline
   dependencies = { 'nvim-tree/nvim-web-devicons', 'folke/trouble.nvim' },
   config = function()
     local trouble = require 'trouble'

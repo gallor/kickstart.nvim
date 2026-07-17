@@ -48,23 +48,19 @@ is still installed but is **no longer the runtime driver** — it only ships the
 
 ## Before You Add a Feature
 
-**Any new UI plugin must be gated with `cond = not vim.g.vscode`.**
+**All plugins are disabled under vscode-neovim (Cursor) via one switch.**
 
 This config also runs under vscode-neovim (Cursor), where Neovim is an embedded
-engine and the editor owns the UI. vscode-neovim sets `vim.g.vscode = true`. UI
-plugins loaded there are redundant and contend with Cursor over its managed
-buffers. mini.diff was the first casualty: it only auto-enables on normal file
-buffers, so a hunk action on a Cursor-managed buffer errored with "Buffer N is
-not enabled." Add `cond = not vim.g.vscode` to the Lazy spec of any plugin that
-draws chrome, manages windows, or duplicates editor functionality (statusline,
-tabline, file explorer, terminal, git signs, diagnostics UI, colorscheme,
-completion, indent guides). Keep editing/motion plugins (treesitter, LSP,
-mini.ai/mini.comment, nvim-surround, which-key, telescope) active — they still
-add value inside Cursor. For a spec that bundles both (mini.nvim), gate the UI
-module setups inside `config` behind `if not vim.g.vscode then ... end` rather
-than the whole spec. Currently gated: bufferline, lualine, trouble, snacks,
-catppuccin, toggleterm, neo-tree, gitsigns, indent-blankline, blink.cmp, and
-mini.diff/mini.map/mini.statusline.
+engine and the editor owns the UI, LSP, completion, formatting, and linting (via
+Cursor's own extensions). vscode-neovim sets `vim.g.vscode` (truthy). Running our
+plugins on top fights Cursor over signatures, the command line, and its managed
+buffers — mini.diff, for example, errored with "Buffer N is not enabled" on a
+Cursor buffer. Rather than gate plugins individually, `lazy-plugins.lua` sets
+`defaults = { cond = not vim.g.vscode }` in the Lazy config, so **every** spec is
+disabled under Cursor in one place. Editing still works via Cursor plus
+vscode-neovim's built-in vim motions. Do not add per-plugin `cond` for the vscode
+case; the global default already covers new plugins. (If you ever need a specific
+plugin to load under Cursor, give that one spec an explicit `cond` to override.)
 
 **Why is blink.cmp the only completion engine (no nvim-cmp)?**
 

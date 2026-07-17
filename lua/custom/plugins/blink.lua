@@ -1,6 +1,5 @@
 return {
   'saghen/blink.cmp',
-  cond = not vim.g.vscode, -- Cursor provides its own completion UI
   -- optional: provides snippets for the snippet source
   dependencies = { 'rafamadriz/friendly-snippets' },
 

@@ -3,7 +3,6 @@
 
 return {
   'nvim-neo-tree/neo-tree.nvim',
-  cond = not vim.g.vscode, -- Cursor owns the file explorer
   version = '*',
   dependencies = {
     'nvim-lua/plenary.nvim',

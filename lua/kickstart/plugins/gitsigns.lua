@@ -5,7 +5,6 @@
 return {
   {
     'lewis6991/gitsigns.nvim',
-    cond = not vim.g.vscode, -- gutter signs; Cursor shows its own git decorations
     opts = {
       signs = {
         add = { text = '+' },

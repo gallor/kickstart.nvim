@@ -52,6 +52,13 @@ require('lazy').setup({
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
+  -- Under vscode-neovim (Cursor), Neovim runs as an embedded engine and the
+  -- editor owns the UI, LSP, completion, formatting, and linting (via its own
+  -- extensions). Running our plugins on top fights Cursor over signatures, the
+  -- command line, and buffers. Disable ALL plugins under vscode with one switch;
+  -- individual specs inherit this `cond` unless they override it. Editing still
+  -- works via Cursor + vscode-neovim's core vim motions.
+  defaults = { cond = not vim.g.vscode },
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
