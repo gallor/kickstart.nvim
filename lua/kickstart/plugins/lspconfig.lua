@@ -121,8 +121,11 @@ return {
           },
         },
 
-        -- BasedPyright entry (robust): explicit cmd + python.analysis shape + micromamba handling
-        pyright = (function()
+        -- basedpyright entry: python.analysis shape + micromamba-aware pythonPath.
+        -- Registered under the `basedpyright` key so mason-tool-installer provisions
+        -- the basedpyright package on every machine, and nvim-lspconfig's default
+        -- `basedpyright-langserver --stdio` cmd applies (no manual cmd override needed).
+        basedpyright = (function()
           local mamba_root = os.getenv("MAMBA_ROOT_PREFIX") or ""
           local conda_env = os.getenv("CONDA_DEFAULT_ENV") or os.getenv("MAMBA_DEFAULT_ENV") or ""
           local venv_path = (mamba_root ~= "" and (mamba_root .. "/envs")) or ""
@@ -132,10 +135,8 @@ return {
           end
 
           return {
-            -- If you want to run the built-in pyright binary, remove/replace the cmd line below.
-            cmd = { "basedpyright-langserver", "--stdio" }, -- optional: override to use BasedPyright
             settings = {
-              pyright = { disableOrganizeImports = true },
+              basedpyright = { disableOrganizeImports = true },
               python = {
                 analysis = {
                   typeCheckingMode = "standard",
