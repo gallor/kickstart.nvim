@@ -11,7 +11,7 @@ return {
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require('catppuccin').setup {
-        flavour = 'mocha',
+        flavour = 'macchiato',
         dim_inactive = {
           enabled = true,
           shade = 'dark',
